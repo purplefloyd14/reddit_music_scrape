@@ -31,6 +31,7 @@ def make_string(data)
   end
 end
 
+
 def execute_everything(data)
   # this method just calls the other two methods in order
   objectified_data = make_string(data)
