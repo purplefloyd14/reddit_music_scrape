@@ -2,6 +2,17 @@
 require "open-uri"
 require 'json'
 require "tempfile"
+require 'watir-webdriver'
+require 'headless'
+
+
+
+headless = Headless.new
+headless.start
+b = Watir::Browser.start 'www.google.com'
+puts b.title
+b.close
+headless.destroy
 
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=10")
 
@@ -38,16 +49,8 @@ def execute_everything(data)
   find_title(objectified_data)
 end
 
-def make_title_hash(array)
-  # this method takes in an array of post-title-strings
-  # it uses regex to separate post-title into song title and artist
-  # returns a hash in "artist: title" format
-  title_hash
-  array.each do |post_title|
-
-  end
-end
 
 
 
-execute_everything(data_from_reddit)
+
+# execute_everything(data_from_reddit)
