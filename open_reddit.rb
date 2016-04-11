@@ -74,7 +74,7 @@ end
 
 
 def run_download(url, month)
-  `youtube-dl -x -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
+  `youtube-dl -x -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
 
 
