@@ -2,41 +2,19 @@
 require "open-uri"
 require 'json'
 require "tempfile"
-require 'watir-webdriver'
-require "phantomjs"
 require "date"
 
-# b = Watir::Browser.new :firefox
-# b.goto 'www.anything2mp3.com'
-# f = b.form(:id, "videoconverter-convert-form")
-# b.text_field(:id, 'edit-url').set('https://www.youtube.com/watch?v=bQDcSkGWvfc&nohtml5=False')
-# f.submit
-# b.button(:class => 'success').wait_until_present
-# b.button(:class => 'success').click
-# puts b.title
-# b.close
-
-# exec "youtube-dl -x -ohttps://www.youtube.com/watch?v=MUINFs1Sp94"
-## https://watirwebdriver.com/waiting/
 
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=20")
+#gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 
 month = Date::MONTHNAMES[Date.today.month]
-p  month
+#the name of the current month
 
-def find_urls(thing)
-  #this method iterates through the data for each post it is given
-  #then it adds all of the titles from the data to an array and returns that array
-  all_titles = []
-  thing["data"]["children"].each do |post|
-    all_titles << post["data"]["url"]
-  end
-  return all_titles
-end
 
-def make_string(data)
+def make_object(data)
   ## this method takes what the reddit api returns, determines its type,
-  ## does the appropriate ready-ing and then sends it to find_title
+  ## does the appropriate ready-ing (usually tempfile -> string -> JSONparse -> Hash)
   if data.class == Tempfile
     p "temp"
     closer =  IO.read(data.path)
@@ -49,40 +27,40 @@ def make_string(data)
   end
 end
 
-
-def execute_everything(month, data_from_reddit)
-  make_dir(month) #create dir for month
-
-  objectified_data = make_string(data_from_reddit) #make reddit data a string
-
-
-  url_array = find_urls(objectified_data)
-  #pass all results (now as string) to find_url method which returns array of urls only
-
-
-  url_array.each do |url|
-    run_download(url, month)
+def find_urls(data_object)
+  #this method iterates through the data object for each post it is given
+  #then it adds all of the urls from the data to an array and returns that array
+  all_urls = []
+  data_object["data"]["children"].each do |post|
+    all_urls << post["data"]["url"]
   end
-  #iterates over url array and downloads file for each url, adding it to month directory
-
+  return all_urls
 end
+
 
 
 def make_dir(month)
-  `mkdir #{month}`
+  `mkdir #{month}` #creates directory with same name as current month
 end
 
 
-def run_download(url, month)
+def run_download(url, month) #downloads url audio source as m4a, adds it to month directory
   `youtube-dl -x -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
+#look into using wget to stagger the downloads
 
 
+def execute_everything(month, data_from_reddit)
+  make_dir(month) #create dir for month
+  objectified_data = make_object(data_from_reddit) #make reddit data an object
+  url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
+  url_array.each do |url| #iterates over url array and downloads file for each url, adding it to month directory
+    run_download(url, month)
+  end
+  #still need
+    #metadata (compilations)
+    #move to itunes
+    #run once per month
+end
 
-
-# run_download
-
-
-#
-#
 execute_everything(month, data_from_reddit)
