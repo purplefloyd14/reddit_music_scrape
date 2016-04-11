@@ -52,16 +52,25 @@ end
 
 def execute_everything(data)
   # this method just calls the other two methods in order
-  # returns array so song urls 
+  # returns array so song urls
   objectified_data = make_string(data)
   find_title(objectified_data)
 end
 
-def run_download(url)
-end
 
 def make_dir(month)
+  `mkdir #{month}`
+  `youtube-dl -x -o\'./#{month}/%(title)s.%(ext)s\' https://www.youtube.com/watch?v=MUINFs1Sp94`
 end
+
+
+def run_download
+  exec "youtube-dl -x https://www.youtube.com/watch?v=MUINFs1Sp94"
+end
+
+make_dir(month)
+
+# run_download
 
 
 #
