@@ -19,19 +19,19 @@ require "date"
 # exec "youtube-dl -x -ohttps://www.youtube.com/watch?v=MUINFs1Sp94"
 ## https://watirwebdriver.com/waiting/
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=10")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=20")
 
 month = Date::MONTHNAMES[Date.today.month]
 p  month
 
-def find_title(thing)
+def find_urls(thing)
   #this method iterates through the data for each post it is given
   #then it adds all of the titles from the data to an array and returns that array
   all_titles = []
   thing["data"]["children"].each do |post|
     all_titles << post["data"]["url"]
   end
-  p all_titles
+  return all_titles
 end
 
 def make_string(data)
@@ -50,29 +50,39 @@ def make_string(data)
 end
 
 
-def execute_everything(data)
-  # this method just calls the other two methods in order
-  # returns array so song urls
-  objectified_data = make_string(data)
-  find_title(objectified_data)
+def execute_everything(month, data_from_reddit)
+  make_dir(month) #create dir for month
+
+  objectified_data = make_string(data_from_reddit) #make reddit data a string
+
+
+  url_array = find_urls(objectified_data)
+  #pass all results (now as string) to find_url method which returns array of urls only
+
+
+  url_array.each do |url|
+    run_download(url, month)
+  end
+  #iterates over url array and downloads file for each url, adding it to month directory
+
 end
 
 
 def make_dir(month)
   `mkdir #{month}`
-  `youtube-dl -x -o\'./#{month}/%(title)s.%(ext)s\' https://www.youtube.com/watch?v=MUINFs1Sp94`
 end
 
 
-def run_download
-  exec "youtube-dl -x https://www.youtube.com/watch?v=MUINFs1Sp94"
+def run_download(url, month)
+  `youtube-dl -x -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
 
-make_dir(month)
+
+
 
 # run_download
 
 
 #
 #
-# execute_everything(data_from_reddit)
+execute_everything(month, data_from_reddit)
