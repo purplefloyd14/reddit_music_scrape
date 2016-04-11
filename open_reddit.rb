@@ -35,6 +35,8 @@ def find_urls(data_object)
     all_urls << post["data"]["url"]
   end
   return all_urls
+  #also scrape artist and song title? Could be useful for naming
+  #Would use reddit "title" and a regex
 end
 
 
@@ -47,7 +49,7 @@ end
 def run_download(url, month) #downloads url audio source as m4a, adds it to month directory
   `youtube-dl -x -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
-#look into using wget to stagger the downloads
+#look into using wget to stagger the downloads/know when they are complete
 
 
 def execute_everything(month, data_from_reddit)
@@ -58,9 +60,9 @@ def execute_everything(month, data_from_reddit)
     run_download(url, month)
   end
   #still need
-    #metadata (compilations)
-    #move to itunes
-    #run once per month
+    # move to itunes
+    # metadata for itunes (compilations)
+    # run once per month
 end
 
 execute_everything(month, data_from_reddit)
