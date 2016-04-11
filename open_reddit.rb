@@ -47,7 +47,7 @@ end
 
 
 def run_download(url, month) #downloads url audio source as m4a, adds it to month directory
-  `youtube-dl -x -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
+  `youtube-dl -x -i -f 140 -o\'./#{month}/%(autonumber)s-(title)s.%(ext)s\' #{url}`
 end
 #look into using wget to stagger the downloads/know when they are complete
 
