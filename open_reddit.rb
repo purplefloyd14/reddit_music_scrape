@@ -51,6 +51,10 @@ def run_download(url, month) #downloads url audio source as m4a, adds it to mont
 end
 #look into using wget to stagger the downloads/know when they are complete
 
+def add_to_itunes(month)
+  `mv #{month}/ ~/Music/iTunes/iTunes\ Media/Automatically\ Add\ to\ iTunes.localized/`
+end
+
 
 def execute_everything(month, data_from_reddit)
   make_dir(month) #create dir for month
@@ -64,5 +68,6 @@ def execute_everything(month, data_from_reddit)
     # metadata for itunes (compilations)
     # run once per month
 end
+
 
 execute_everything(month, data_from_reddit)
