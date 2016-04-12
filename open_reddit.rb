@@ -2,9 +2,8 @@ require "open-uri"
 require 'json'
 require "tempfile"
 require "date"
-require "id3tag"
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=3")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=year&limit=10")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 
 month = Date::MONTHNAMES[Date.today.month]
@@ -54,11 +53,6 @@ end
 def run_download(url, month) #downloads url audio source as m4a, adds it to month directory
   `youtube-dl -x -i -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
-#look into using wget to stagger the downloads/know when they are complete
-
-def hookem
-  p "hookem deacs"
-end
 
 
 def add_to_itunes(month)
@@ -82,7 +76,7 @@ def execute_everything(month, data_from_reddit)
     run_download(url, month)
   end
   p "no more urls"
-  add_metadata(month)
+  add_to_itunes(month)
   #still need
     # move to itunes
     # metadata for itunes (compilations)
