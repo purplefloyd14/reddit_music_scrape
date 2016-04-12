@@ -61,10 +61,7 @@ end
 
 
 def add_to_itunes(month)
-  # p month
-  # p month.class
-  # dest = "~/Music/iTunes/iTunes\ Media/Automatically\ Add\ to\ iTunes.localized/"
-  `mv ./April/ ~/Music/iTunes/iTunes\\ Media/Automatically\\ Add\\ to\\ iTunes.localized/`
+  `mv ./#{month}/ ~/Music/iTunes/iTunes\\ Media/Automatically\\ Add\\ to\\ iTunes.localized/`
 end
 
 def change_to_mp3(month)
