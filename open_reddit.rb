@@ -60,26 +60,25 @@ def run_download(url, month) #downloads url audio source as m4a, adds it to mont
 end
 
 
-def add_to_itunes(month)
+def add_to_itunes(month) #adds month folder to itunes
   `mv ./#{month}/ ~/Music/iTunes/iTunes\\ Media/Automatically\\ Add\\ to\\ iTunes.localized/`
 end
 
-def change_to_mp3(month)
+def change_to_mp3(month) #changes all m4a in month folder to mp3
   Dir.glob("./#{month}/*.m4a").each do |f|
     FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.mp3"
   end
 end
 
 
-def change_back_to_m4a(month)
+def change_back_to_m4a(month) #changes all mp3 in month folder back to m4a
   Dir.glob("./#{month}/*.mp3").each do |f|
     FileUtils.mv f, "#{File.dirname(f)}/#{File.basename(f,'.*')}.m4a"
   end
 end
 
 def add_metadata(month)
-  change_to_mp3(month)
-  # dir = "/Users/bradleyneal/Desktop/projects/OpenReddit/#{month}/"
+  change_to_mp3(month) #change titles to mp3 for tagging
   dir = "./#{month}/"
   Dir.entries(dir).each do |file|
    next if file !~ /.mp3$/ # skip files not ending with .mp3
@@ -89,7 +88,7 @@ def add_metadata(month)
       p mp3.tag.album
    end
   end
-  change_back_to_m4a(month)
+  change_back_to_m4a(month) #tagging is done, go back to m4a
 end
 
 
