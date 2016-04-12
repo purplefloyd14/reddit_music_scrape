@@ -1,11 +1,10 @@
-
 require "open-uri"
 require 'json'
 require "tempfile"
 require "date"
+require "id3tag"
 
-
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=20")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=3")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 
 month = Date::MONTHNAMES[Date.today.month]
@@ -39,6 +38,12 @@ def find_urls(data_object)
   #Would use reddit "title" and a regex
 end
 
+def find_titles(data_object)
+end
+
+def find_artists(data_object)
+end
+
 
 
 def make_dir(month)
@@ -47,12 +52,24 @@ end
 
 
 def run_download(url, month) #downloads url audio source as m4a, adds it to month directory
-  `youtube-dl -x -i -f 140 -o\'./#{month}/%(autonumber)s-(title)s.%(ext)s\' #{url}`
+  `youtube-dl -x -i -f 140 -o\'./#{month}/%(title)s.%(ext)s\' #{url}`
 end
 #look into using wget to stagger the downloads/know when they are complete
 
+def hookem
+  p "hookem deacs"
+end
+
+
 def add_to_itunes(month)
   `mv #{month}/ ~/Music/iTunes/iTunes\ Media/Automatically\ Add\ to\ iTunes.localized/`
+end
+
+def add_metadata(month)
+  files = Dir.entries("./#{month}/")
+  files.each do |file|
+    p file
+  end
 end
 
 
@@ -60,9 +77,12 @@ def execute_everything(month, data_from_reddit)
   make_dir(month) #create dir for month
   objectified_data = make_object(data_from_reddit) #make reddit data an object
   url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
-  url_array.each do |url| #iterates over url array and downloads file for each url, adding it to month directory
+  url_array.each_with_index do |url, idx| #iterates over url array and downloads file for each url, adding it to month directory
+    p url, idx
     run_download(url, month)
   end
+  p "no more urls"
+  add_metadata(month)
   #still need
     # move to itunes
     # metadata for itunes (compilations)
@@ -71,3 +91,4 @@ end
 
 
 execute_everything(month, data_from_reddit)
+# new_download_method(month)
