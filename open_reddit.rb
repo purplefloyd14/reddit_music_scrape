@@ -9,7 +9,7 @@ require "rmagick" #for adding text - used brew install gs to get it working.
 include Magick
 
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
 #gets top 1 picture from r/earthporn from that month
@@ -106,14 +106,6 @@ def find_urls(data_object)
   #Would use reddit "title" and a regex
 end
 
-def find_titles(data_object) #get song_title
-end
-
-def find_artists(data_object) #get artist
-end
-
-
-
 def make_dir(month)
   `mkdir #{month}` #creates directory with same name as current month
 end
@@ -128,16 +120,24 @@ def add_to_itunes(month) #adds month folder to itunes library
   `mv ./#{month}/ ~/Music/iTunes/iTunes\\ Media/Automatically\\ Add\\ to\\ iTunes.localized/`
 end
 
+def download_urls(url_array, month)
+  url_array.each_with_index do |url, idx|
+    count = Dir["./#{month}/**/*"].length
+    if count < 20
+      run_download(url, month)
+    end
+  end
+end
+
+
+
 
 
 def execute_everything(month, data_from_reddit)
   make_dir(month) #create dir for month
   objectified_data = make_object(data_from_reddit) #make reddit data an object
   url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
-  url_array.each_with_index do |url, idx| #iterates over url array and downloads file for each url, adding it to month directory
-    p url, idx
-    run_download(url, month)
-  end
+  download_urls(url_array)
   p "no more urls"
   image_url = parse_img_data(image_from_reddit)
   get_pic(image_url, month, year)
@@ -146,8 +146,6 @@ def execute_everything(month, data_from_reddit)
   tag(month, year)
   add_to_itunes(month)
   #still need
-    # metadata for itunes (compilations)
-    # cover art
     # 100% success rate
     # run once per month
 end
