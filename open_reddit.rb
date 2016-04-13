@@ -1,16 +1,26 @@
-require "open-uri"
-require 'json'
-require "tempfile"
-require "date"
-require "mp3info"
-require "taglib"
-require "find"
+require "open-uri" #for getting the data from reddit
+require 'json' #for parsing what is returned from reddit
+require "tempfile" #working with the large amount of json from reddit
+require "date" #month and year items
+require "taglib" #tagging metadata
+require "find" #for iterating through the songs in the folder
+require "mechanize" #for downloading the image from the url
+
 
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
+image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
+#gets top 1 picture from r/earthporn from that month
 
 month = Date::MONTHNAMES[Date.today.month]
+year = Date.today.year
 #the name of the current month
+
+def get_pic(image_from_reddit)
+  agent = Mechanize.new
+  link = image_from_reddit
+  agent.get(link).save "images/pic.jpg"
+end
 
 def tag(month) #this method adds album metadata for all of the tracks in the file
   dir = "./#{month}/"
@@ -38,6 +48,17 @@ def make_object(data)
     ready_version = JSON.parse(data.string)
     return ready_version
   end
+end
+
+def get_pic(image_url_string)
+  agent = Mechanize.new
+  link = image_url_string
+  agent.get(link).save
+end
+
+def parse_img_data(image_from_reddit)
+  objectified_image_data = make_object(image_from_reddit)
+  return find_urls(objectified_image_data)[0]
 end
 
 
@@ -71,7 +92,7 @@ def run_download(url, month) #downloads url audio source as m4a, adds it to mont
 end
 
 
-def add_to_itunes(month) #adds month folder to itunes
+def add_to_itunes(month) #adds month folder to itunes library
   `mv ./#{month}/ ~/Music/iTunes/iTunes\\ Media/Automatically\\ Add\\ to\\ iTunes.localized/`
 end
 
@@ -87,6 +108,8 @@ def execute_everything(month, data_from_reddit)
   p "no more urls"
   tag(month)
   add_to_itunes(month)
+  a = parse_img_data(image_from_reddit)
+  get_pic(a)
   #still need
     # metadata for itunes (compilations)
     # cover art
