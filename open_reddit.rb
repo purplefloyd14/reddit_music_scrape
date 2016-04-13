@@ -5,6 +5,8 @@ require "date" #month and year items
 require "taglib" #tagging metadata
 require "find" #for iterating through the songs in the folder
 require "mechanize" #for downloading the image from the url
+require "rmagick" #for adding text - used brew install gs to get it working.
+include Magick
 
 
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
@@ -16,22 +18,52 @@ month = Date::MONTHNAMES[Date.today.month]
 year = Date.today.year
 #the name of the current month
 
-def get_pic(image_from_reddit)
+def get_pic(image_url_string, month, year)
   agent = Mechanize.new
-  link = image_from_reddit
-  agent.get(link).save "images/pic.jpg"
+  link = image_url_string
+  agent.get(link).save "#{month}_#{year}_album_art.jpg"
 end
 
-def tag(month) #this method adds album metadata for all of the tracks in the file
+def tag(month, year)
+  image_data = File.open("./#{month}/#{month}_#{year}_with_text.jpg", 'rb') { |f| f.read }
+  cover_art = TagLib::MP4::CoverArt.new(TagLib::MP4::CoverArt::JPEG, image_data)
+  item = TagLib::MP4::Item.from_cover_art_list([cover_art])
   dir = "./#{month}/"
   Find.find(dir) do |song|
     next if song !~ /.m4a$/
     TagLib::MP4::File.open(song) do |el|
       tag = el.tag
-      tag.album = "r/listentothis - #{month}"
+      tag.album = "#{month} #{year}"
+      tag.artist = "r/listentothis"
+      tag.item_list_map.insert('covr', item)
       el.save
     end
+    # Load an ID3v2 tag from a file
+    # File is automatically closed at block end
   end
+end  # File is automatically closed at block end
+
+def add_text_to_pic(month, year)
+  colors = ["blue", "red", "green", "orange", "yellow", "pink", "purple", "white", "black"]
+  img = ImageList.new("./#{month}_#{year}_album_art.jpg")
+  txt = Draw.new
+  img.annotate(txt,0,0,0,0, "r/listentothis\n#{month}\n#{year}") do
+    txt.font_family = 'Helvetica'
+    txt.fill = colors.sample
+    txt.pointsize = 92
+    txt.font_weight = BoldWeight
+    txt.gravity = CenterGravity
+  end
+  img.write("./#{month}/#{month}_#{year}_with_text.jpg")
+end
+
+def parse_img_data(image_from_reddit)
+  objectified_image_data = make_object(image_from_reddit)
+  return find_urls(objectified_image_data)[0]
+end
+
+def delete_original_pic
+  'rm ./*.jpg'
 end
 
 
@@ -107,10 +139,12 @@ def execute_everything(month, data_from_reddit)
     run_download(url, month)
   end
   p "no more urls"
-  tag(month)
+  image_url = parse_img_data(image_from_reddit)
+  get_pic(image_url, month, year)
+  add_text_to_pic(month, year)
+  delete_original_pic
+  tag(month, year)
   add_to_itunes(month)
-  a = parse_img_data(image_from_reddit)
-  get_pic(a)
   #still need
     # metadata for itunes (compilations)
     # cover art
