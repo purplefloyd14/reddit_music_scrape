@@ -12,7 +12,7 @@ data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&
 month = Date::MONTHNAMES[Date.today.month]
 #the name of the current month
 
-def tag(month)
+def tag(month) #this method adds album metadata for all of the tracks in the file
   dir = "./#{month}/"
   Find.find(dir) do |song|
     next if song !~ /.m4a$/
@@ -21,10 +21,8 @@ def tag(month)
       tag.album = "r/listentothis - #{month}"
       el.save
     end
-    # Load an ID3v2 tag from a file
-    # File is automatically closed at block end
   end
-end  # File is automatically closed at block end
+end
 
 
 def make_object(data)
@@ -55,10 +53,10 @@ def find_urls(data_object)
   #Would use reddit "title" and a regex
 end
 
-def find_titles(data_object)
+def find_titles(data_object) #get song_title
 end
 
-def find_artists(data_object)
+def find_artists(data_object) #get artist
 end
 
 
@@ -90,11 +88,11 @@ def execute_everything(month, data_from_reddit)
   tag(month)
   add_to_itunes(month)
   #still need
-    # move to itunes
     # metadata for itunes (compilations)
+    # cover art
+    # 100% success rate
     # run once per month
 end
 
 
 execute_everything(month, data_from_reddit)
-# new_download_method(month)
