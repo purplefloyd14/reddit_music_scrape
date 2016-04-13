@@ -24,6 +24,7 @@ def get_pic(image_url_string, month, year)
   agent.get(link).save "#{month}_#{year}_album_art.jpg"
 end
 
+
 def tag(month, year)
   image_data = File.open("./#{month}/#{month}_#{year}_with_text.jpg", 'rb') { |f| f.read }
   cover_art = TagLib::MP4::CoverArt.new(TagLib::MP4::CoverArt::JPEG, image_data)
@@ -82,11 +83,6 @@ def make_object(data)
   end
 end
 
-def get_pic(image_url_string)
-  agent = Mechanize.new
-  link = image_url_string
-  agent.get(link).save
-end
 
 def parse_img_data(image_from_reddit)
   objectified_image_data = make_object(image_from_reddit)
@@ -133,11 +129,11 @@ end
 
 
 
-def execute_everything(month, data_from_reddit)
-  make_dir(month) #create dir for month
-  objectified_data = make_object(data_from_reddit) #make reddit data an object
-  url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
-  download_urls(url_array)
+def execute_everything(month, data_from_reddit, image_from_reddit, year)
+  # make_dir(month) #create dir for month
+  # objectified_data = make_object(data_from_reddit) #make reddit data an object
+  # url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
+  # download_urls(url_array, month)
   p "no more urls"
   image_url = parse_img_data(image_from_reddit)
   get_pic(image_url, month, year)
@@ -150,5 +146,4 @@ def execute_everything(month, data_from_reddit)
     # run once per month
 end
 
-
-execute_everything(month, data_from_reddit)
+execute_everything(month, data_from_reddit, image_from_reddit, year)
