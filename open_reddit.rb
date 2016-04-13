@@ -11,7 +11,7 @@ include Magick
 puts "Starting Processes: Reddit r/listentothis scrape.."
 
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
 #gets top 1 picture from r/earthporn from that month
@@ -101,8 +101,6 @@ def find_urls(data_object)
     all_urls << post["data"]["url"]
   end
   return all_urls
-  #also scrape artist and song title? Could be useful for naming
-  #Would use reddit "title" and a regex
 end
 
 def make_dir(month)
