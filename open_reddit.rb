@@ -64,7 +64,6 @@ def parse_img_data(image_from_reddit)
 end
 
 def delete_original_pic
-  p "deleting pic"
   `rm ./*.jpg`
 end
 
@@ -131,16 +130,16 @@ end
 
 
 def execute_everything(month, data_from_reddit, image_from_reddit, year)
-  # make_dir(month) #create dir for month
-  # objectified_data = make_object(data_from_reddit) #make reddit data an object
-  # url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
-  # download_urls(url_array, month) #download songs from url array
-  # image_url = parse_img_data(image_from_reddit) #get image from reddit
-  # get_pic(image_url, month, year) #saves image to current directory
-  # add_text_to_pic(month, year) #adds text to image
+  make_dir(month) #create dir for month
+  objectified_data = make_object(data_from_reddit) #make reddit data an object
+  url_array = find_urls(objectified_data) #scrapes all urls from object, returns array of urls
+  download_urls(url_array, month) #download songs from url array
+  image_url = parse_img_data(image_from_reddit) #get image from reddit
+  get_pic(image_url, month, year) #saves image to current directory
+  add_text_to_pic(month, year) #adds text to image
   delete_original_pic #deletes original image
-  # tag(month, year) #adds metadata tags for album, artist, cover art
-  # add_to_itunes(month) #adds everything to itunes
+  tag(month, year) #adds metadata tags for album, artist, cover art
+  add_to_itunes(month) #adds everything to itunes
   #still need
     # 100% success rate
     # run once per month
