@@ -51,7 +51,7 @@ def add_text_to_pic(month, year)
   img.annotate(txt,0,0,0,0, "r/listentothis\n#{month}\n#{year}") do
     txt.font_family = 'Helvetica'
     txt.fill = colors.sample
-    txt.pointsize = 92
+    txt.pointsize = 114
     txt.font_weight = BoldWeight
     txt.gravity = CenterGravity
   end
@@ -141,7 +141,6 @@ def execute_everything(month, data_from_reddit, image_from_reddit, year)
   tag(month, year) #adds metadata tags for album, artist, cover art
   add_to_itunes(month) #adds everything to itunes
   #still need
-    # 100% success rate
     # run once per month
 end
 
