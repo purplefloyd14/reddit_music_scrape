@@ -3,7 +3,8 @@ require 'json'
 require "tempfile"
 require "date"
 require "mp3info"
-require "fileutils"
+require "taglib"
+require "find"
 
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
@@ -17,7 +18,7 @@ def tag(month)
     next if song !~ /.m4a$/
     TagLib::MP4::File.open(song) do |el|
       tag = el.tag
-      tag.album = "#{month} + MOFUCKA"
+      tag.album = "r/listentothis - #{month}"
       el.save
     end
     # Load an ID3v2 tag from a file
@@ -113,7 +114,7 @@ def execute_everything(month, data_from_reddit)
     run_download(url, month)
   end
   p "no more urls"
-  # add_metadata(month)
+  tag(month)
   add_to_itunes(month)
   #still need
     # move to itunes
