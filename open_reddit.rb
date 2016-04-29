@@ -1,4 +1,5 @@
-require "open-uri" #for getting the data from reddit
+require "open-uri" #for getting the data from reddit\
+require 'fastimage' #for getting the size of the image so I can use proper text size when stamping
 require 'json' #for parsing what is returned from reddit
 require "tempfile" #working with the large amount of json from reddit
 require "date" #month and year items
@@ -11,10 +12,12 @@ include Magick
 puts "Starting Processes: Reddit r/listentothis scrape.."
 
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30", "User-Agent" => "Hello")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
-image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
+
+image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1", "User-Agent" => "Hello")
 #gets top 1 picture from r/earthporn from that month
+
 
 month = Date::MONTHNAMES[Date.today.month]
 year = Date.today.year
@@ -24,8 +27,11 @@ def get_pic(image_url_string, month, year)
   puts "Getting image from reddit.."
   agent = Mechanize.new
   link = image_url_string
+  @image_size = FastImage.size(link)
   agent.get(link).save "#{month}_#{year}_album_art.jpg"
 end
+
+
 
 
 def tag(month, year)
@@ -53,15 +59,17 @@ def add_text_to_pic(month, year)
   colors = ["blue", "red", "green", "orange", "yellow", "pink", "purple", "white", "black"]
   img = ImageList.new("./#{month}_#{year}_album_art.jpg")
   txt = Draw.new
+  size = @image_size[0]/10
   img.annotate(txt,0,0,0,0, "r/listentothis\n#{month}\n#{year}") do
     txt.font_family = 'Helvetica'
     txt.fill = colors.sample
-    txt.pointsize = 114
+    txt.pointsize = size
     txt.font_weight = BoldWeight
     txt.gravity = CenterGravity
   end
   img.write("./#{month}/#{month}_#{year}_with_text.jpg")
 end
+
 
 
 def delete_original_pic
@@ -159,3 +167,4 @@ def execute_everything(month, data_from_reddit, image_from_reddit, year)
 end
 
 execute_everything(month, data_from_reddit, image_from_reddit, year)
+# get_pic(image_url, month, year)
