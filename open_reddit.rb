@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 require "open-uri" #for getting the data from reddit\
 require 'fastimage' #for getting the size of the image so I can use proper text size when stamping
+=======
+#!/bin/bash
+require "open-uri" #for getting the data from reddit
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
 require 'json' #for parsing what is returned from reddit
 require "tempfile" #working with the large amount of json from reddit
 require "date" #month and year items
@@ -12,6 +17,7 @@ include Magick
 puts "Starting Processes: Reddit r/listentothis scrape.."
 
 
+<<<<<<< HEAD
 data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30", "User-Agent" => "Hello")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 
@@ -19,6 +25,13 @@ image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=
 #gets top 1 picture from r/earthporn from that month
 
 
+=======
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
+#gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
+image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
+#gets top 1 picture from r/earthporn from that month
+
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
 month = Date::MONTHNAMES[Date.today.month]
 year = Date.today.year
 #the name of the current month
@@ -27,13 +40,19 @@ def get_pic(image_url_string, month, year)
   puts "Getting image from reddit.."
   agent = Mechanize.new
   link = image_url_string
+<<<<<<< HEAD
   @image_size = FastImage.size(link)
+=======
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
   agent.get(link).save "#{month}_#{year}_album_art.jpg"
 end
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
 def tag(month, year)
   puts "Adding metadata tags.."
   image_data = File.open("./#{month}/#{month}_#{year}_with_text.jpg", 'rb') { |f| f.read }
@@ -71,7 +90,10 @@ def add_text_to_pic(month, year)
 end
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
 def delete_original_pic
   `rm ./*.jpg`
 end
@@ -167,4 +189,7 @@ def execute_everything(month, data_from_reddit, image_from_reddit, year)
 end
 
 execute_everything(month, data_from_reddit, image_from_reddit, year)
+<<<<<<< HEAD
 # get_pic(image_url, month, year)
+=======
+>>>>>>> 8e278562044e00143536e40c61ce97b4bbaa3899
