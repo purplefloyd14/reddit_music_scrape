@@ -12,16 +12,16 @@ include Magick
 puts "Starting Processes: Reddit r/listentothis scrape.."
 
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30", "User-Agent" => "Hello")
+data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=30", "User-Agent" => "Brad")
 #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
 
-image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1", "User-Agent" => "Hello")
+image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1", "User-Agent" => "Brad")
 #gets top 1 picture from r/earthporn from that month
 
 
-data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
-#gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
-image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
+# data_from_reddit = open("http://www.reddit.com/r/listentothis/top.json?sort=top&t=month&limit=5")
+# #gets top 20 posts from r/listentothis in the past month (usually) in tempfile format
+# image_from_reddit = open("http://www.reddit.com/r/earthporn/top.json?sort=top&t=month&limit=1")
 #gets top 1 picture from r/earthporn from that month
 
 month = Date::MONTHNAMES[Date.today.month]
